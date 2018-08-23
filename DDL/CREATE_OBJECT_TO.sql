@@ -111,31 +111,31 @@ CREATE UNIQUE INDEX  "T_PIC_MASTER_TO_PK" ON  "T_PIC_MASTER_TO" ("T_PIC")
 /
 CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_APP" as 
  
-    --���O�C���F�� 
+    --ログイン認証 
     function FUNCTION_CUSTOM_AUTH ( 
     p_username in varchar2, 
     p_password in varchar2 ) 
     return boolean; 
  
-    --�I���f�[�^���Z�b�g
+    --棚卸データリセット
     procedure fnc_ResetInventoryList; 
  
-    --�I�����X�g�폜
+    --棚卸リスト削除
     procedure fnc_DeleteInventoryList; 
     
-    --HT�p�}�X�^�f�[�^�쐬
+    --HT用マスタデータ作成
     procedure fnc_CreateDataForHT
     ( 
         strSQL in varchar2
     ); 
     
-    --�}�X�^��荞��
+    --マスタ取り込み
     procedure fnc_ImportInventoryCsv
     ( 
         strFileName in varchar2
     ); 
 
-    --CSV�_�E�����[�h
+    --CSVダウンロード
     function fnc_ExportCSV 
     ( 
         strSQL in varchar2
@@ -145,7 +145,7 @@ end PKG_TO_APP;
 /
 CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is 
  
-    --���O�C���F�� 
+    --ログイン認証 
 	function FUNCTION_CUSTOM_AUTH ( 
 	    p_username in varchar2, 
 	    p_password in varchar2 ) 
@@ -185,12 +185,12 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
 	end FUNCTION_CUSTOM_AUTH; 
 
 
-    --�I�����X�g���Z�b�g
+    --棚卸リストリセット
     procedure fnc_ResetInventoryList 
     is  
     BEGIN 
  
-        --�I�����X�g�폜
+        --棚卸リスト削除
         UPDATE 
             T_INVENTORY_TO 
         SET 
@@ -199,12 +199,12 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
     end fnc_ResetInventoryList; 
 
 
-    --�I�����X�g�폜
+    --棚卸リスト削除
     procedure fnc_DeleteInventoryList 
     is  
     BEGIN 
  
-        --�I�����X�g�폜
+        --棚卸リスト削除
         DELETE
         FROM
             T_INVENTORY_TO;
@@ -212,7 +212,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
     end fnc_DeleteInventoryList; 
 
 
-    --HT�p�}�X�^�f�[�^�쐬
+    --HT用マスタデータ作成
     procedure fnc_CreateDataForHT
     ( 
         strSQL in varchar2
@@ -231,7 +231,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
         DELETE FROM T_INVENTORY_WORK2_TO;
 
 
-        --�f�[�^�̃��R�[�h�Z�b�g���J��
+        --データのレコードセットを開く
         OPEN cur FOR strSQL;
         LOOP
             FETCH cur into rec;
@@ -247,7 +247,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
                 ) 
             VALUES
                 (
-                    rec.T_GROUP1 || '�@' || rec.T_FIELD1,
+                    rec.T_GROUP1 || '　' || rec.T_FIELD1,
                     rec.T_FIELD2,
                     rec.T_VALUE
                 );
@@ -277,12 +277,12 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
 
         END LOOP;
 
-        --���R�[�h�Z�b�g�����
+        --レコードセットを閉じる
         CLOSE cur;
 
     END fnc_CreateDataForHT; 
     
-    --�}�X�^��荞��
+    --マスタ取り込み
     procedure fnc_ImportInventoryCsv
     ( 
         strFileName in varchar2
@@ -301,10 +301,10 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
         v_cnt             NUMBER                    := 0;
     BEGIN
 
-        --�C���|�[�g��e�[�u�����폜����
+        --インポート先テーブルを削除する
         DELETE FROM T_INVENTORY_TO;
 
-        --�ꎞ�t�@�C������t�@�C�����Ō������ăf�[�^���擾����
+        --一時ファイルからファイル名で検索してデータを取得する
         SELECT 
             BLOB_CONTENT INTO v_blob_data
         FROM 
@@ -317,7 +317,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
         v_position := 1;
 
 
-        --�f�[�^����e�L�X�g�f�[�^�ɕϊ�����
+        --データからテキストデータに変換する
         WHILE ( v_position <= v_blob_len ) LOOP
 
             v_raw_chunk := dbms_lob.substr(v_blob_data,c_chunk_len,v_position);
@@ -325,20 +325,20 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
             v_line := v_line || v_char;
             v_position := v_position + c_chunk_len;
 
-            --LF�i���s�R�[�h����������j
+            --LF（改行コードを見つけたら）
             IF v_char = CHR(10) THEN
             
                 v_cnt         := v_cnt + 1;
                 v_findFlg     := 1;
-                v_line        := REPLACE (v_line, ',', ':');                    --�J���}(,)��؂��(:)�ɕϊ�
-                v_data_array  := wwv_flow_utilities.string_to_table (v_line);   --�u:�v�ŋ�؂��Ĕz��ɓ����
+                v_line        := REPLACE (v_line, ',', ':');                    --カンマ(,)区切りを(:)に変換
+                v_data_array  := wwv_flow_utilities.string_to_table (v_line);   --「:」で区切って配列に入れる
             
-                --���o���̗L���𔻒f���Ď�荞��
+                --見出しの有無を判断して取り込む
                 IF v_cnt > 1 THEN
-                --IF v_cnt > 0 THEN    --���o���Ȃ�
-                --IF v_cnt > 1 THEN    --���o������
+                --IF v_cnt > 0 THEN    --見出しなし
+                --IF v_cnt > 1 THEN    --見出しあり
 
-                    --T_INVENTORY_TO�ɑ��݂��邩�`�F�b�N
+                    --T_INVENTORY_TOに存在するかチェック
                     BEGIN
                         SELECT 
                             NVL(T_VALUE, 0) INTO v_value
@@ -352,7 +352,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
                                 v_findFlg     := 0;
                     END;
 
-                    --�X�V
+                    --更新
                     IF v_findFlg > 0 THEN
                     
                         UPDATE 
@@ -365,7 +365,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
                             
                     ELSE
                     
-                        --�ǉ�
+                        --追加
                         INSERT INTO T_INVENTORY_TO
                               (
                                 T_FIELD1, 
@@ -387,7 +387,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
                     
                 END IF;
 
-                --��������N���A
+                --文字列をクリア
                 v_line    := NULL;
                 v_value   := 0;
 
@@ -396,7 +396,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
         END LOOP;
 
 
-        --���p�����ꎞ�t�@�C�����폜����
+        --利用した一時ファイルを削除する
         DELETE 
         FROM
             APEX_APPLICATION_FILES 
@@ -405,7 +405,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
 
         END fnc_ImportInventoryCsv;
         
-    --CSV�_�E�����[�h
+    --CSVダウンロード
     function fnc_ExportCSV 
     ( 
         strSQL in varchar2
@@ -423,12 +423,12 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
         
         --CREATE HEADER
         l_line           := '';
-        l_line           := l_line || '����1' || ',';
-        l_line           := l_line || '����2' || ',';
-        l_line           := l_line || '�݌ɐ�' || ',';
-        l_line           := l_line || '�O���[�v�L�[' || ',';
-        l_line           := l_line || '�I����' || ',';
-        l_line           := l_line || '����' || '';
+        l_line           := l_line || '項目1' || ',';
+        l_line           := l_line || '項目2' || ',';
+        l_line           := l_line || '在庫数' || ',';
+        l_line           := l_line || 'グループキー' || ',';
+        l_line           := l_line || '棚卸数' || ',';
+        l_line           := l_line || '差異' || '';
         l_line           := l_line || chr(13) || chr(10);
     
         OPEN cur FOR strSQL;
@@ -462,33 +462,33 @@ end PKG_TO_APP;
 
 CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_DELETE_OLD_DATA" IS 
  
-    --�ߋ��f�[�^�폜 
+    --過去データ削除 
     procedure fnc_DeleteOldData; 
  
-    --�ߋ��f�[�^�폜JOB�쐬 
+    --過去データ削除JOB作成 
     procedure fnc_JobCreate; 
  
-    --�ߋ��f�[�^�폜JOB�폜 
+    --過去データ削除JOB削除 
     procedure fnc_JobDelete; 
      
-    --�ߋ��f�[�^�폜JOB�L���� 
+    --過去データ削除JOB有効化 
     procedure fnc_JobEnabled; 
  
-    --�ߋ��f�[�^�폜JOB������ 
+    --過去データ削除JOB無効化 
     procedure fnc_JobDisabled; 
  
 END PKG_TO_DELETE_OLD_DATA; 
  
---�o�^�ς݂�JOB�ꗗ�͉��L��SQL�Ŏ擾���� 
+--登録済みのJOB一覧は下記のSQLで取得する 
 --SELECT * FROM USER_SCHEDULER_JOBS;
 /
 CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DELETE_OLD_DATA" IS 
  
-    --�ߋ��f�[�^�폜 
+    --過去データ削除 
     procedure fnc_DeleteOldData IS 
     BEGIN 
      
-        --T_INVENTORY_HISTORY_TO�폜 
+        --T_INVENTORY_HISTORY_TO削除 
         DELETE 
         FROM 
             T_INVENTORY_HISTORY_TO 
@@ -500,7 +500,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DELETE_OLD_DATA" IS
     END fnc_DeleteOldData; 
  
  
-    --�ߋ��f�[�^�폜JOB�쐬 
+    --過去データ削除JOB作成 
     procedure fnc_JobCreate IS 
     BEGIN 
         DBMS_SCHEDULER.CREATE_JOB( 
@@ -513,21 +513,21 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DELETE_OLD_DATA" IS
     END fnc_JobCreate; 
    
  
-    --�ߋ��f�[�^�폜JOB�폜 
+    --過去データ削除JOB削除 
     procedure fnc_JobDelete IS 
     BEGIN 
         DBMS_SCHEDULER.DROP_JOB('JOB_TO_DELETE_OLD_DATA'); 
     END fnc_JobDelete; 
  
  
-    --�ߋ��f�[�^�폜JOB�L���� 
+    --過去データ削除JOB有効化 
     procedure fnc_JobEnabled IS 
     BEGIN 
         DBMS_SCHEDULER.ENABLE('JOB_TO_DELETE_OLD_DATA'); 
     END fnc_JobEnabled; 
  
  
-    --�ߋ��f�[�^�폜JOB������ 
+    --過去データ削除JOB無効化 
     procedure fnc_JobDisabled IS 
     BEGIN 
         DBMS_SCHEDULER.DISABLE('JOB_TO_DELETE_OLD_DATA'); 
@@ -538,7 +538,7 @@ END PKG_TO_DELETE_OLD_DATA;
 
 CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_DRS" as 
  
-    --�I���m�� 
+    --棚卸確定 
     procedure fnc_TCMPCMP 
     ( 
         strPic           IN VARCHAR2, 
@@ -549,7 +549,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_DRS" as
     ); 
  
  
-    --�m��(�t�@�C����������) 
+    --確定(ファイル書き込み) 
     procedure fnc_FCMPCMP 
     ( 
         ja               IN JSON_ARRAY_T 
@@ -559,7 +559,7 @@ end;
 /
 CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS 
  
-    --�I���m�� 
+    --棚卸確定 
     procedure fnc_TCMPCMP 
     ( 
         strPic           VARCHAR2, 
@@ -569,7 +569,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
         dtTime           TIMESTAMP WITH TIME ZONE
     ) 
     AS 
-        --�ϐ��錾
+        --変数宣言
         blnFound NUMBER DEFAULT 1;
         OldValue NUMBER; 
         NewValue NUMBER; 
@@ -587,7 +587,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
             --INSERT INTO T_DEBUG (T_MESSAGE) VALUES('fnc_TCMPCMP');
             --commit;
                 
-            --�� �S���Җ����擾���Ă��� -------------------------------------------------------------------- 
+            --↓ 担当者名を取得しておく -------------------------------------------------------------------- 
             BEGIN 
  
                 SELECT 
@@ -598,20 +598,20 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
                 WHERE 
                     T_PIC = strPic 
                     OR upper(T_PIC) = strPic; 
-                    --�蓮���͂���̓��͂�z�肵�āA�啶���ł��������Ă��� 
+                    --手動入力からの入力を想定して、大文字でも検索しておく 
  
             EXCEPTION 
                 WHEN NO_DATA_FOUND THEN 
                     strPicName := ''; 
             END; 
-            --�� �S���Җ����擾���Ă��� -------------------------------------------------------------------- 
+            --↑ 担当者名を取得しておく -------------------------------------------------------------------- 
 
  
-            --�� �݌ɂ��X�V���� -------------------------------------------------------------------- 
+            --↓ 在庫を更新する -------------------------------------------------------------------- 
             BEGIN 
  
             commit;
-                --���݌ɐ����擾���� 
+                --現在庫数を取得する 
                 BEGIN 
                  
                     SELECT 
@@ -629,7 +629,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
  
                     EXCEPTION 
                         WHEN NO_DATA_FOUND THEN 
-                            blnFound := 0;    --�Y���Ȃ�
+                            blnFound := 0;    --該当なし
                             strJisseki := NULL;
                             strField2 := NULL;
                 END; 
@@ -639,10 +639,10 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
                     OldValue := 0; 
                 END IF;
                  
-                --T_INVENTORY_TO�e�[�u���X�V 
+                --T_INVENTORY_TOテーブル更新 
                 IF blnFound = 1 THEN 
  
-                    --�݌ɐ��X�V 
+                    --在庫数更新 
                     UPDATE 
                         T_INVENTORY_TO 
                     SET 
@@ -654,7 +654,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
 
                 ELSE 
 
-                    --���R�[�h�ǉ� 
+                    --レコード追加 
                     INSERT INTO 
                         T_INVENTORY_TO 
                         ( 
@@ -700,13 +700,13 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
         END fnc_TCMPCMP; 
          
          
-    --�m��(�t�@�C����������) 
+    --確定(ファイル書き込み) 
     procedure fnc_FCMPCMP 
     ( 
         ja          JSON_ARRAY_T 
     ) 
     AS 
-        --�ϐ��錾 
+        --変数宣言 
         je JSON_ELEMENT_T; 
         jo JSON_OBJECT_T; 
  
@@ -723,20 +723,20 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
         --DELETE FROM T_DEBUG;
         --commit;
 
-        --�z�񕪂̏��������� 
+        --配列分の処理をする 
         for i in 0..ja.get_size - 1 
         loop 
  
-            --JSON�̔z�񂩂�P�s�����o�� 
+            --JSONの配列から１行ずつ取り出す 
             je := ja.get(i); 
             if (je.is_object) then 
  
-                --JSON�I�u�W�F�N�g�ɕϊ� 
+                --JSONオブジェクトに変換 
                 jo := treat(je as json_object_t); 
  
-                --�I�u�W�F�N�g���擾 
+                --オブジェクトを取得 
                 strRecord := jo.get('record').to_string; 
-                strRecord := REPLACE(strRecord, '"', '');    --�擪�Ɩ����̃_�u���N�H�[�e�[�V�����΍� 
+                strRecord := REPLACE(strRecord, '"', '');    --先頭と末尾のダブルクォーテーション対策 
                 strTime := strtoken(strRecord, ',', 1); 
                 strBTID := strtoken(strRecord, ',', 2); 
                 strPic := strtoken(strRecord, ',', 3); 
@@ -744,7 +744,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
                 strField1 := strtoken(strRecord, ',', 5); 
                 strSuryo := strtoken(strRecord, ',', 6); 
                 
-                --��������
+                --書き込み
                 PKG_TO_DRS.fnc_TCMPCMP(strPic, strLocationId, strField1, strSuryo, TO_TIMESTAMP_TZ(CONCAT(strTime, ' +09:00'), 'YYYY-MM-DD HH24:MI:SS TZH:TZM')); 
 
             end if; 
@@ -758,33 +758,33 @@ END PKG_TO_DRS;
 
 CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_RESET_DEMO_DATA" IS 
  
-    --�f���f�[�^���Z�b�g
+    --デモデータリセット
     procedure fnc_ResetDemoData; 
  
-    --�f���f�[�^���Z�b�gJOB�쐬 
+    --デモデータリセットJOB作成 
     procedure fnc_JobCreate; 
  
-    --�f���f�[�^���Z�b�gJOB�폜 
+    --デモデータリセットJOB削除 
     procedure fnc_JobDelete; 
      
-    --�f���f�[�^���Z�b�gJOB�L���� 
+    --デモデータリセットJOB有効化 
     procedure fnc_JobEnabled; 
  
-    --�f���f�[�^���Z�b�gJOB������ 
+    --デモデータリセットJOB無効化 
     procedure fnc_JobDisabled; 
  
 END PKG_TO_RESET_DEMO_DATA;
  
---�o�^�ς݂�JOB�ꗗ�͉��L��SQL�Ŏ擾���� 
+--登録済みのJOB一覧は下記のSQLで取得する 
 --SELECT * FROM USER_SCHEDULER_JOBS;
 /
 CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS 
  
-    --�f���f�[�^���Z�b�g 
+    --デモデータリセット 
     procedure fnc_ResetDemoData
     IS
    
-        --�ϐ��錾 
+        --変数宣言 
         RECORDCOUNT   NUMBER; 
         dtLatestDate   T_INVENTORY_HISTORY_TO.T_TIME%TYPE; 
         DateCount   NUMBER; 
@@ -794,7 +794,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
         --debug
         DELETE FROM T_DEBUG;
 
-        --T_***_BACKUP�e�[�u�����f�[�^��߂�
+        --T_***_BACKUPテーブルよりデータを戻す
         DELETE from T_INITIAL_TO;
         INSERT INTO T_INITIAL_TO SELECT * FROM T_INITIAL_TO_BACKUP;
 
@@ -807,13 +807,13 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
         DELETE from T_INVENTORY_TO;
         INSERT INTO T_INVENTORY_TO SELECT * FROM T_INVENTORY_TO_BACKUP;
 
-        --HT�ւ̃}�X�^�p���[�N�e�[�u�����폜
+        --HTへのマスタ用ワークテーブルを削除
         DELETE FROM T_INVENTORY_WORK_TO;
         DELETE FROM T_INVENTORY_WORK2_TO;
 
-        --�� T_INVENTORY_HISTORY_TO�̓��t��V�������� -------------------------------------------------------------------- 
+        --↓ T_INVENTORY_HISTORY_TOの日付を新しくする -------------------------------------------------------------------- 
 
-        -- T_INVENTORY_HISTORY_TO�̃��R�[�h�����邩�ǂ���
+        -- T_INVENTORY_HISTORY_TOのレコードがあるかどうか
         BEGIN
             select
                 COUNT(*) 
@@ -822,7 +822,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
                 T_INVENTORY_HISTORY_TO;
         END;
         
-        --�����f�[�^���Ȃ���Δ�����
+        --もしデータがなければ抜ける
         IF RECORDCOUNT = 0 then
             return;
         END IF;
@@ -830,7 +830,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
         --debug
         --INSERT INTO T_DEBUG (T_MESSAGE) VALUES(TO_CHAR(RECORDCOUNT));
 
-        --�ł��V�������t���擾
+        --最も新しい日付を取得
         BEGIN
             SELECT
                 MAX(T_TIME)
@@ -841,7 +841,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
         --debug
         --INSERT INTO T_DEBUG (T_MESSAGE) VALUES(TO_CHAR(dtLatestDate));
 
-        --�{���Ƃ̍������擾
+        --本日との差分を取得
         BEGIN
             SELECT
                 SYSDATE - CAST(dtLatestDate AS DATE)
@@ -853,13 +853,13 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
         --debug
         --INSERT INTO T_DEBUG (T_MESSAGE) VALUES(TO_CHAR(DateCount));
         
-        --���t���X�V
+        --日付を更新
         UPDATE
             T_INVENTORY_HISTORY_TO
         SET
             T_TIME = FROM_TZ (cast(T_TIME + DateCount as timestamp), 'ASIA/TOKYO');
         
-        --�ł��V�������t���擾
+        --最も新しい日付を取得
         BEGIN
             SELECT
                 MAX(T_TIME)
@@ -870,12 +870,12 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
         --debug
         --INSERT INTO T_DEBUG (T_MESSAGE) VALUES(TO_CHAR(dtLatestDate));
 
-        --�� T_INVENTORY_HISTORY_TO�̓��t��V�������� -------------------------------------------------------------------- 
+        --↑ T_INVENTORY_HISTORY_TOの日付を新しくする -------------------------------------------------------------------- 
 
     END fnc_ResetDemoData; 
  
  
-    --�f���f�[�^���Z�b�gJOB�쐬 
+    --デモデータリセットJOB作成 
     procedure fnc_JobCreate IS 
     BEGIN 
         DBMS_SCHEDULER.CREATE_JOB( 
@@ -888,21 +888,21 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
     END fnc_JobCreate; 
    
  
-    --�f���f�[�^���Z�b�gJOB�폜 
+    --デモデータリセットJOB削除 
     procedure fnc_JobDelete IS 
     BEGIN 
         DBMS_SCHEDULER.DROP_JOB('JOB_TO_RESET_DEMO_DATA'); 
     END fnc_JobDelete; 
  
  
-    --�f���f�[�^���Z�b�gJOB�L���� 
+    --デモデータリセットJOB有効化 
     procedure fnc_JobEnabled IS 
     BEGIN 
         DBMS_SCHEDULER.ENABLE('JOB_TO_RESET_DEMO_DATA'); 
     END fnc_JobEnabled; 
  
  
-    --�f���f�[�^���Z�b�gJOB������ 
+    --デモデータリセットJOB無効化 
     procedure fnc_JobDisabled IS 
     BEGIN 
         DBMS_SCHEDULER.DISABLE('JOB_TO_RESET_DEMO_DATA'); 
@@ -966,4 +966,17 @@ end;
 
 /
 ALTER TRIGGER  "bi_T_INVENTORY_TO_BACKUP" ENABLE
+/
+--担当者マスタに初期データを挿入T_PIC：admin T_PIC_NAME:admin T_PASSWORD:39393939(16進＆小文字[9999])
+INSERT INTO T_PIC_MASTER_TO ( T_PIC,T_PIC_NAME,T_PASSWORD) VALUES ('admin','admin','39393939');
+INSERT INTO T_PIC_MASTER_TO_BACKUP ( T_PIC,T_PIC_NAME,T_PASSWORD) VALUES ('admin','admin','39393939');
+--環境設定テーブルに棚卸開始フラグの値を追加
+INSERT INTO T_INITIAL_TO ( T_INITIAL_ID,T_INITIAL_VALUE,T_CONTENTS) VALUES ('26','0','棚卸開始フラグ');
+INSERT INTO T_INITIAL_TO_BACKUP ( T_INITIAL_ID,T_INITIAL_VALUE,T_CONTENTS) VALUES ('26','0','棚卸開始フラグ');
+
+--過去データ削除JOBの作成＆有効化を実行
+begin
+ PKG_TO_DELETE_OLD_DATA.fnc_JobCreate;
+ PKG_TO_DELETE_OLD_DATA.fnc_JobEnabled;
+end;
 /
