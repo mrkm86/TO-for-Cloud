@@ -27,7 +27,7 @@ prompt APPLICATION 126 - TanaOrosi STARTER
 -- Application Export:
 --   Application:     126
 --   Name:            TanaOrosi STARTER
---   Date and Time:   00:11 木曜日 8月 23, 2018
+--   Date and Time:   02:24 月曜日 9月 3, 2018
 --   Exported By:     MURAKAMI@HEARTIS-SC.CO.JP
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -83,7 +83,7 @@ wwv_flow_api.create_flow(
 ,p_display_id=>nvl(wwv_flow_application_install.get_application_id,126)
 ,p_owner=>nvl(wwv_flow_application_install.get_schema,'HSCDEVELOP')
 ,p_name=>nvl(wwv_flow_application_install.get_application_name,'TanaOrosi STARTER')
-,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'F_13960126')
+,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'TANAOROSI')
 ,p_page_view_logging=>'YES'
 ,p_page_protection_enabled_y_n=>'Y'
 ,p_checksum_salt=>'A664F4F600DFFA407391CC8D5585E4C2CED3D07910A9D8610B7A950770D13C30'
@@ -116,7 +116,7 @@ wwv_flow_api.create_flow(
 ,p_substitution_string_02=>'T_FIELD_NAME2'
 ,p_substitution_value_02=>unistr('\54C1\540D')
 ,p_last_updated_by=>'MURAKAMI@HEARTIS-SC.CO.JP'
-,p_last_upd_yyyymmddhh24miss=>'20180822110945'
+,p_last_upd_yyyymmddhh24miss=>'20180831063210'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>2
 ,p_ui_type_name => null
@@ -14416,7 +14416,7 @@ wwv_flow_api.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MURAKAMI@HEARTIS-SC.CO.JP'
-,p_last_upd_yyyymmddhh24miss=>'20180822110945'
+,p_last_upd_yyyymmddhh24miss=>'20180830110306'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(38491847060452996)
@@ -14491,6 +14491,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>unistr('\5728\5EAB\6570')
 ,p_column_type=>'NUMBER'
 ,p_heading_alignment=>'LEFT'
+,p_format_mask=>'999G999G999G999G999G999G990'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(38494253210452998)
@@ -14500,6 +14501,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>unistr('\68DA\5378\6570')
 ,p_column_type=>'NUMBER'
 ,p_heading_alignment=>'LEFT'
+,p_format_mask=>'9G999G999G999G990'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(12322428495734802)
@@ -14525,22 +14527,23 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_sum_columns_on_break=>'T_VALUE:T_JISSEKI:APXWS_CC_001'
 );
 wwv_flow_api.create_worksheet_condition(
- p_id=>wwv_flow_api.id(38537940585926838)
+ p_id=>wwv_flow_api.id(14388105304808899)
 ,p_report_id=>wwv_flow_api.id(38497343855465728)
 ,p_name=>unistr('\5DEE\7570\304C\3042\308B\3082\306E\306E\307F\8868\793A')
 ,p_condition_type=>'FILTER'
 ,p_allow_delete=>'Y'
 ,p_expr_type=>'ROW'
-,p_expr=>'E <> F'
-,p_condition_sql=>'"T_VALUE" <> "T_JISSEKI"'
+,p_expr=>'NVL(E, 0) <> NVL(F, 0)'
+,p_condition_sql=>'NVL("T_VALUE", 0) <> NVL("T_JISSEKI", 0)'
 ,p_enabled=>'N'
 );
 wwv_flow_api.create_worksheet_computation(
- p_id=>wwv_flow_api.id(38538310831926840)
+ p_id=>wwv_flow_api.id(14388595813808898)
 ,p_report_id=>wwv_flow_api.id(38497343855465728)
 ,p_db_column_name=>'APXWS_CC_001'
 ,p_column_identifier=>'C01'
 ,p_computation_expr=>'F- E'
+,p_format_mask=>'9G999G999G999G990'
 ,p_column_type=>'NUMBER'
 ,p_column_label=>unistr('\5DEE\7570')
 ,p_report_label=>unistr('\5DEE\7570')
@@ -14889,7 +14892,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'MURAKAMI@HEARTIS-SC.CO.JP'
-,p_last_upd_yyyymmddhh24miss=>'20180717093745'
+,p_last_upd_yyyymmddhh24miss=>'20180830080320'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(38483673754452956)
@@ -15041,18 +15044,18 @@ wwv_flow_api.create_page_item(
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(38488748821452991)
 ,p_name=>'P111_T_VALUE'
+,p_is_required=>true
 ,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_api.id(38483673754452956)
 ,p_use_cache_before_default=>'NO'
 ,p_prompt=>unistr('\5728\5EAB\6570')
 ,p_source=>'T_VALUE'
 ,p_source_type=>'DB_COLUMN'
-,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_field_template=>wwv_flow_api.id(22342386131005384753)
+,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_cSize=>30
+,p_field_template=>wwv_flow_api.id(22342386325984384754)
 ,p_item_template_options=>'#DEFAULT#'
-,p_attribute_01=>'Y'
-,p_attribute_02=>'VALUE'
-,p_attribute_04=>'Y'
+,p_attribute_03=>'right'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(38489164707452991)
@@ -15065,7 +15068,7 @@ wwv_flow_api.create_page_item(
 ,p_source=>'T_JISSEKI'
 ,p_source_type=>'DB_COLUMN'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
-,p_cSize=>32
+,p_cSize=>30
 ,p_cMaxlength=>255
 ,p_field_template=>wwv_flow_api.id(22342386325984384754)
 ,p_item_template_options=>'#DEFAULT#'
@@ -15149,7 +15152,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'MURAKAMI@HEARTIS-SC.CO.JP'
-,p_last_upd_yyyymmddhh24miss=>'20180717232503'
+,p_last_upd_yyyymmddhh24miss=>'20180830110230'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(66117830953201353662)
@@ -15299,6 +15302,7 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_label=>unistr('\6570\91CF')
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G999G999G990'
 );
 wwv_flow_api.create_worksheet_column(
  p_id=>wwv_flow_api.id(43994989462017951261)

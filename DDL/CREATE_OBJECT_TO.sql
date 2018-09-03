@@ -1,3 +1,20 @@
+--TABLE-------------------------------------------------------------------------
+CREATE TABLE  "T_INITIAL_TO" 
+   (	"T_INITIAL_ID" NUMBER, 
+	"T_INITIAL_VALUE" VARCHAR2(255), 
+	"T_CONTENTS" VARCHAR2(255), 
+	 CONSTRAINT "T_INITIAL_TO_PK" PRIMARY KEY ("T_INITIAL_ID")
+  USING INDEX  ENABLE
+   )
+/
+CREATE TABLE  "T_INITIAL_TO_BACKUP" 
+   (	"T_INITIAL_ID" NUMBER, 
+	"T_INITIAL_VALUE" VARCHAR2(255), 
+	"T_CONTENTS" VARCHAR2(255), 
+	 CONSTRAINT "T_INITIAL_TO_BACKUP_PK" PRIMARY KEY ("T_INITIAL_ID")
+  USING INDEX  ENABLE
+   )
+/
 CREATE TABLE  "T_INVENTORY_HISTORY_TO" 
    (	"ID" NUMBER, 
 	"T_BTID" VARCHAR2(255), 
@@ -10,12 +27,6 @@ CREATE TABLE  "T_INVENTORY_HISTORY_TO"
 	"T_VALUE" NUMBER, 
 	"T_COMMENT" VARCHAR2(255), 
 	 CONSTRAINT "T_INVENTORY_HISTORY_TO_PK" PRIMARY KEY ("ID") DISABLE
-   )
-/
-CREATE TABLE  "T_INVENTORY_WORK_TO_TEMP" 
-   (	"T_UNIQUE" VARCHAR2(255), 
-	"T_FIELD2" VARCHAR2(255), 
-	"T_VALUE" NUMBER
    )
 /
 CREATE TABLE  "T_INVENTORY_HISTORY_TO_BACKUP" 
@@ -32,11 +43,14 @@ CREATE TABLE  "T_INVENTORY_HISTORY_TO_BACKUP"
 	 CONSTRAINT "T_INVENTORY_HISTORY_TO_BACKUP_PK" PRIMARY KEY ("ID") DISABLE
    )
 /
-CREATE TABLE  "T_INITIAL_TO" 
-   (	"T_INITIAL_ID" NUMBER, 
-	"T_INITIAL_VALUE" VARCHAR2(255), 
-	"T_CONTENTS" VARCHAR2(255), 
-	 CONSTRAINT "T_INITIAL_TO_PK" PRIMARY KEY ("T_INITIAL_ID")
+CREATE TABLE  "T_INVENTORY_TO" 
+   (	"ID" NUMBER, 
+	"T_FIELD1" VARCHAR2(255), 
+	"T_FIELD2" VARCHAR2(255), 
+	"T_GROUP1" VARCHAR2(255), 
+	"T_VALUE" NUMBER, 
+	"T_JISSEKI" NUMBER, 
+	 CONSTRAINT "T_INVENTORY_TO_PK" PRIMARY KEY ("ID")
   USING INDEX  ENABLE
    )
 /
@@ -51,25 +65,6 @@ CREATE TABLE  "T_INVENTORY_TO_BACKUP"
   USING INDEX  ENABLE
    )
 /
-CREATE TABLE  "T_INVENTORY_TO" 
-   (	"ID" NUMBER, 
-	"T_FIELD1" VARCHAR2(255), 
-	"T_FIELD2" VARCHAR2(255), 
-	"T_GROUP1" VARCHAR2(255), 
-	"T_VALUE" NUMBER, 
-	"T_JISSEKI" NUMBER, 
-	 CONSTRAINT "T_INVENTORY_TO_PK" PRIMARY KEY ("ID")
-  USING INDEX  ENABLE
-   )
-/
-CREATE TABLE  "T_PIC_MASTER_TO_BACKUP" 
-   (	"T_PIC" VARCHAR2(255) NOT NULL ENABLE, 
-	"T_PIC_NAME" VARCHAR2(255) NOT NULL ENABLE, 
-	"T_PASSWORD" VARCHAR2(255), 
-	 CONSTRAINT "T_PIC_MASTER_TO_BACKUP_PK" PRIMARY KEY ("T_PIC")
-  USING INDEX  ENABLE
-   )
-/
 CREATE TABLE  "T_INVENTORY_WORK2_TO" 
    (	"T_FIELD1" VARCHAR2(255), 
 	"T_FIELD2" VARCHAR2(255)
@@ -81,12 +76,10 @@ CREATE TABLE  "T_INVENTORY_WORK_TO"
 	"T_VALUE" NUMBER
    )
 /
-CREATE TABLE  "T_INITIAL_TO_BACKUP" 
-   (	"T_INITIAL_ID" NUMBER, 
-	"T_INITIAL_VALUE" VARCHAR2(255), 
-	"T_CONTENTS" VARCHAR2(255), 
-	 CONSTRAINT "T_INITIAL_TO_BACKUP_PK" PRIMARY KEY ("T_INITIAL_ID")
-  USING INDEX  ENABLE
+CREATE TABLE  "T_INVENTORY_WORK_TO_TEMP" 
+   (	"T_UNIQUE" VARCHAR2(255), 
+	"T_FIELD2" VARCHAR2(255), 
+	"T_VALUE" NUMBER
    )
 /
 CREATE TABLE  "T_PIC_MASTER_TO" 
@@ -97,19 +90,27 @@ CREATE TABLE  "T_PIC_MASTER_TO"
   USING INDEX  ENABLE
    )
 /
-CREATE UNIQUE INDEX  "T_INITIAL_TO_BACKUP_PK" ON  "T_INITIAL_TO_BACKUP" ("T_INITIAL_ID")
+CREATE TABLE  "T_PIC_MASTER_TO_BACKUP" 
+   (	"T_PIC" VARCHAR2(255) NOT NULL ENABLE, 
+	"T_PIC_NAME" VARCHAR2(255) NOT NULL ENABLE, 
+	"T_PASSWORD" VARCHAR2(255), 
+	 CONSTRAINT "T_PIC_MASTER_TO_BACKUP_PK" PRIMARY KEY ("T_PIC")
+  USING INDEX  ENABLE
+   )
 /
-CREATE UNIQUE INDEX  "T_INITIAL_TO_PK" ON  "T_INITIAL_TO" ("T_INITIAL_ID")
+
+--SEQUENCE  -------------------------------------------------------------------------
+ CREATE SEQUENCE   "T_INVENTORY_HISTORY_TO_BACKUP_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 81 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL
 /
-CREATE UNIQUE INDEX  "T_INVENTORY_TO_BACKUP_PK" ON  "T_INVENTORY_TO_BACKUP" ("ID")
+ CREATE SEQUENCE   "T_INVENTORY_HISTORY_TO_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 141 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL
 /
-CREATE UNIQUE INDEX  "T_INVENTORY_TO_PK" ON  "T_INVENTORY_TO" ("ID")
+ CREATE SEQUENCE   "T_INVENTORY_TO_BACKUP_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 161 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL
 /
-CREATE UNIQUE INDEX  "T_PIC_MASTER_TO_BACKUP_PK" ON  "T_PIC_MASTER_TO_BACKUP" ("T_PIC")
+ CREATE SEQUENCE   "T_INVENTORY_TO_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 6041 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL
 /
-CREATE UNIQUE INDEX  "T_PIC_MASTER_TO_PK" ON  "T_PIC_MASTER_TO" ("T_PIC")
-/
-CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_APP" as 
+--PACKAGE  -------------------------------------------------------------------------
+----HEADER
+create or replace PACKAGE  "PKG_TO_APP" as 
  
     --ログイン認証 
     function FUNCTION_CUSTOM_AUTH ( 
@@ -140,10 +141,11 @@ CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_APP" as
     ( 
         strSQL in varchar2
     ) return BLOB; 
-   
+    
 end PKG_TO_APP;
 /
-CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is 
+----BODY
+create or replace PACKAGE BODY  "PKG_TO_APP" is 
  
     --ログイン認証 
 	function FUNCTION_CUSTOM_AUTH ( 
@@ -281,28 +283,36 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
         CLOSE cur;
 
     END fnc_CreateDataForHT; 
-    
+
+
     --マスタ取り込み
     procedure fnc_ImportInventoryCsv
     ( 
         strFileName in varchar2
     )
     IS
-        v_blob_data       BLOB;
-        v_blob_len        NUMBER;
-        v_position        NUMBER;
-        v_raw_chunk       RAW(10000);
-        v_char            CHAR(1);
-        c_chunk_len       NUMBER                    := 1;
-        v_line            VARCHAR2 (32767)          := NULL;
-        v_data_array      wwv_flow_global.vc_arr2;
-        v_value           NUMBER                    := 0;
-        v_findFlg         NUMBER                    := 0;
-        v_cnt             NUMBER                    := 0;
+    
+        v_blob_data       BLOB;                                --アップロードされたファイルBLOB
+        v_blob_len        NUMBER;                              --アップロードされたファイルのバイト数
+        l_blob_result 	  BLOB;                                --読み込み済データ
+		amount 			  NUMBER := 32767;                     --１度に読取可能なバイト数
+		buf    			  VARCHAR2(32767);                     --読取データ（文字列）
+		arr 			  APEX_APPLICATION_GLOBAL.VC_ARR2;     --読取データ（行ごとに分割）
+        v_line            VARCHAR2 (32767)          := NULL;   --１行のデータ
+		offset 			  NUMBER := 1;                         --カーソル位置（ファイル先頭からの位置）
+        v_data_array      wwv_flow_global.vc_arr2;             --１行のデータ（フィールド区切り）
+        v_value           NUMBER                    := 0;      --在庫数
+        v_findFlg         NUMBER                    := 0;      --テーブル有無判定フラグ
+       
     BEGIN
+        --debug
+        --DELETE FROM T_DEBUG;
 
-        --インポート先テーブルを削除する
-        DELETE FROM T_INVENTORY_TO;
+        --実績クリア
+        UPDATE
+            T_INVENTORY_TO
+        SET
+            T_JISSEKI = null;
 
         --一時ファイルからファイル名で検索してデータを取得する
         SELECT 
@@ -312,99 +322,125 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
         WHERE 
             Name = strFileName 
             AND ROWNUM = 1;
+	    
+        --BLOBデータ長を取得する
+		v_blob_len := dbms_lob.getlength(v_blob_data); 
 
-        v_blob_len := dbms_lob.getlength(v_blob_data);
-        v_position := 1;
+        --読み込み済データの格納変数にデータ長分のメモリ確保
+        DBMS_LOB.createTemporary(l_blob_result, TRUE);
 
+        --LF(CHR(10))で区切って、配列に入れる
+        arr := APEX_UTIL.string_to_table(buf, CHR(10));
 
-        --データからテキストデータに変換する
-        WHILE ( v_position <= v_blob_len ) LOOP
+        --カーソル(offset)がファイル長よりも少ないうちは処理を続ける
+		WHILE offset < v_blob_len LOOP
+        
+            --buf(varchar2)にamountの長さ（32767）だけ読み込む
+            buf := UTL_RAW.CAST_TO_VARCHAR2(dbms_lob.substr(v_blob_data,amount,offset));
+            --読み込んだ分だけカーソルを移動しておく
+            offset := offset + amount;
 
-            v_raw_chunk := dbms_lob.substr(v_blob_data,c_chunk_len,v_position);
-            v_char :=  chr(hex_to_decimal(rawtohex(v_raw_chunk)));
-            v_line := v_line || v_char;
-            v_position := v_position + c_chunk_len;
+            --LF(CHR(10))で区切って、配列に入れる
+            arr := APEX_UTIL.string_to_table(buf, CHR(10));
 
-            --LF（改行コードを見つけたら）
-            IF v_char = CHR(10) THEN
+            --配列の数だけ回す
+            FOR i IN 1..arr.COUNT LOOP
             
-                v_cnt         := v_cnt + 1;
-                v_findFlg     := 1;
-                v_line        := REPLACE (v_line, ',', ':');                    --カンマ(,)区切りを(:)に変換
-                v_data_array  := wwv_flow_utilities.string_to_table (v_line);   --「:」で区切って配列に入れる
-            
-                --見出しの有無を判断して取り込む
-                IF v_cnt > 1 THEN
-                --IF v_cnt > 0 THEN    --見出しなし
-                --IF v_cnt > 1 THEN    --見出しあり
+                --読み込めた範囲内で、配列ごとに処理をする
+                IF i < arr.COUNT THEN
 
-                    --T_INVENTORY_TOに存在するかチェック
-                    BEGIN
-                        SELECT 
-                            NVL(T_VALUE, 0) INTO v_value
-                        FROM 
-                            T_INVENTORY_TO 
-                        WHERE 
-                                T_FIELD1 = v_data_array(1)
-                            AND T_GROUP1 = v_data_array(4);
-                        EXCEPTION
-                            WHEN NO_DATA_FOUND THEN
-                                v_findFlg     := 0;
-                    END;
+                    --改行をなくす
+                    v_line := arr(i);
+                    v_line := REPLACE (v_line, CHR(10), '');
+                    v_line := REPLACE (v_line, CHR(13), '');
 
-                    --更新
-                    IF v_findFlg > 0 THEN
-                    
-                        UPDATE 
-                            T_INVENTORY_TO
-                        SET 
-                            T_VALUE = NVL(v_data_array(3), 0) + v_value
-                        WHERE 
-                                T_FIELD1 = v_data_array(1)
-                            AND T_GROUP1 = v_data_array(4);
-                            
-                    ELSE
-                    
-                        --追加
-                        INSERT INTO T_INVENTORY_TO
-                              (
-                                T_FIELD1, 
-                                T_FIELD2, 
-                                T_VALUE, 
-                                T_GROUP1, 
-                                T_JISSEKI
-                              )
-                          VALUES
-                              (
-                                TRIM(v_data_array(1)),
-                                TRIM(v_data_array(2)),
-                                TRIM(v_data_array(3)),
-                                TRIM(v_data_array(4)),
-                                TRIM(v_data_array(5))
-                              );
-                              
+                    --空白行でなければ処理をする
+                    IF v_line IS NOT NULL THEN
+
+                        --debug
+                        --INSERT INTO T_DEBUG (T_MESSAGE) VALUES( v_line );
+                        --commit;
+
+                        --カンマ区切りで分割
+                        v_data_array  := wwv_flow_utilities.string_to_table (v_line, ',');
+
+                        --フラグを初期化
+                        v_findFlg := 1;
+
+                        --T_INVENTORY_TOに存在するかチェック
+                        BEGIN
+                            SELECT 
+                                NVL(T_VALUE, 0) INTO v_value
+                            FROM 
+                                T_INVENTORY_TO 
+                            WHERE 
+                                    T_FIELD1 = v_data_array(1)
+                                AND T_GROUP1 = v_data_array(4);
+                            EXCEPTION
+                                WHEN NO_DATA_FOUND THEN
+                                    v_findFlg     := 0;
+                        END;
+
+                        --テーブル更新
+                        IF v_findFlg > 0 THEN
+
+                            --更新
+                            UPDATE 
+                                T_INVENTORY_TO
+                            SET 
+                                T_VALUE = NVL(v_data_array(3), 0) + v_value
+                            WHERE 
+                                    T_FIELD1 = v_data_array(1)
+                                AND T_GROUP1 = v_data_array(4);
+
+                        ELSE
+
+                            --追加
+                            INSERT INTO T_INVENTORY_TO
+                                  (
+                                    T_FIELD1, 
+                                    T_FIELD2, 
+                                    T_VALUE, 
+                                    T_GROUP1
+                                  )
+                              VALUES
+                                  (
+                                    TRIM(v_data_array(1)),
+                                    TRIM(v_data_array(2)),
+                                    TRIM(v_data_array(3)),
+                                    TRIM(v_data_array(4))
+                                  );
+
+                        END IF;
+
+                        --処理の最後に、読み込み済変数に改行(CrLf)を付け直しておく
+                        DBMS_LOB.APPEND(l_blob_result, UTL_RAW.CAST_TO_RAW(v_line || CHR(13) || chr(10)));
+
                     END IF;
-                    
+                 
+                --最終行の扱いに気を付ける（１度に32762バイトしか読み込めないので、最後の行は中途半端になっている可能性がある。処理済みのデータの終了位置から読み込みなおす。）
+                ELSE
+                
+                    --読み込み済変数のデータ長を取得
+                    offset := length(l_blob_result);
+
                 END IF;
+                
+            End Loop;
 
-                --文字列をクリア
-                v_line    := NULL;
-                v_value   := 0;
-
-            END IF;
-
-        END LOOP;
+        End Loop;
 
 
         --利用した一時ファイルを削除する
-        DELETE 
+        DELETE
         FROM
             APEX_APPLICATION_FILES 
         WHERE
             Name = strFileName;
+		
+	END fnc_ImportInventoryCsv;
 
-        END fnc_ImportInventoryCsv;
-        
+
     --CSVダウンロード
     function fnc_ExportCSV 
     ( 
@@ -456,11 +492,11 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_APP" is
         return l_blob_result;
           
     END fnc_ExportCSV;
-  
+    
 end PKG_TO_APP;
 /
-
-CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_DELETE_OLD_DATA" IS 
+----HEADER
+create or replace PACKAGE  "PKG_TO_DELETE_OLD_DATA" IS 
  
     --過去データ削除 
     procedure fnc_DeleteOldData; 
@@ -482,7 +518,8 @@ END PKG_TO_DELETE_OLD_DATA;
 --登録済みのJOB一覧は下記のSQLで取得する 
 --SELECT * FROM USER_SCHEDULER_JOBS;
 /
-CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DELETE_OLD_DATA" IS 
+----BODY
+create or replace PACKAGE BODY  "PKG_TO_DELETE_OLD_DATA" IS 
  
     --過去データ削除 
     procedure fnc_DeleteOldData IS 
@@ -535,8 +572,8 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DELETE_OLD_DATA" IS
  
 END PKG_TO_DELETE_OLD_DATA;
 /
-
-CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_DRS" as 
+----HEADER
+create or replace PACKAGE  "PKG_TO_DRS" as 
  
     --棚卸確定 
     procedure fnc_TCMPCMP 
@@ -557,7 +594,8 @@ CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_DRS" as
  
 end;
 /
-CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS 
+----BODY
+create or replace PACKAGE BODY  "PKG_TO_DRS" IS 
  
     --棚卸確定 
     procedure fnc_TCMPCMP 
@@ -594,7 +632,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
                     T_PIC_NAME 
                     INTO strPicName 
                 FROM 
-                    T_PIC_MASTER_ZK 
+                    T_PIC_MASTER_TO 
                 WHERE 
                     T_PIC = strPic 
                     OR upper(T_PIC) = strPic; 
@@ -755,8 +793,8 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_DRS" IS
  
 END PKG_TO_DRS;
 /
-
-CREATE OR REPLACE EDITIONABLE PACKAGE  "PKG_TO_RESET_DEMO_DATA" IS 
+----HEADER
+create or replace PACKAGE  "PKG_TO_RESET_DEMO_DATA" IS 
  
     --デモデータリセット
     procedure fnc_ResetDemoData; 
@@ -778,7 +816,8 @@ END PKG_TO_RESET_DEMO_DATA;
 --登録済みのJOB一覧は下記のSQLで取得する 
 --SELECT * FROM USER_SCHEDULER_JOBS;
 /
-CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS 
+----BODY
+create or replace PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS 
  
     --デモデータリセット 
     procedure fnc_ResetDemoData
@@ -910,15 +949,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PKG_TO_RESET_DEMO_DATA" IS
  
 END PKG_TO_RESET_DEMO_DATA; 
 /
-
- CREATE SEQUENCE   "T_INVENTORY_HISTORY_TO_BACKUP_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 81 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL
-/
- CREATE SEQUENCE   "T_INVENTORY_TO_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 2921 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL
-/
- CREATE SEQUENCE   "T_INVENTORY_HISTORY_TO_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 121 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL
-/
- CREATE SEQUENCE   "T_INVENTORY_TO_BACKUP_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 161 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL
-/
+--TRIGGER
 CREATE OR REPLACE EDITIONABLE TRIGGER  "bi_T_INVENTORY_HISTORY_TO" 
   before insert on "T_INVENTORY_HISTORY_TO"               
   for each row  
@@ -967,16 +998,19 @@ end;
 /
 ALTER TRIGGER  "bi_T_INVENTORY_TO_BACKUP" ENABLE
 /
---担当者マスタに初期データを挿入T_PIC：admin T_PIC_NAME:admin T_PASSWORD:39393939(16進＆小文字[9999])
-INSERT INTO T_PIC_MASTER_TO ( T_PIC,T_PIC_NAME,T_PASSWORD) VALUES ('admin','admin','39393939');
-INSERT INTO T_PIC_MASTER_TO_BACKUP ( T_PIC,T_PIC_NAME,T_PASSWORD) VALUES ('admin','admin','39393939');
---環境設定テーブルに棚卸開始フラグの値を追加
-INSERT INTO T_INITIAL_TO ( T_INITIAL_ID,T_INITIAL_VALUE,T_CONTENTS) VALUES ('26','0','棚卸開始フラグ');
-INSERT INTO T_INITIAL_TO_BACKUP ( T_INITIAL_ID,T_INITIAL_VALUE,T_CONTENTS) VALUES ('26','0','棚卸開始フラグ');
-
+--その他---------------------------------------------------------------------------------------------------
 --過去データ削除JOBの作成＆有効化を実行
 begin
  PKG_TO_DELETE_OLD_DATA.fnc_JobCreate;
  PKG_TO_DELETE_OLD_DATA.fnc_JobEnabled;
 end;
 /
+--担当者マスタに初期データを挿入T_PIC：admin T_PIC_NAME:admin T_PASSWORD:39393939(16進＆小文字[9999])
+INSERT INTO T_PIC_MASTER_TO ( T_PIC,T_PIC_NAME,T_PASSWORD) VALUES ('admin','admin','39393939');
+
+INSERT INTO T_PIC_MASTER_TO_BACKUP ( T_PIC,T_PIC_NAME,T_PASSWORD) VALUES ('admin','admin','39393939');
+
+--環境設定テーブルに棚卸開始フラグの値を追加
+INSERT INTO T_INITIAL_TO ( T_INITIAL_ID,T_INITIAL_VALUE,T_CONTENTS) VALUES ('26','0','棚卸開始フラグ');
+
+INSERT INTO T_INITIAL_TO_BACKUP ( T_INITIAL_ID,T_INITIAL_VALUE,T_CONTENTS) VALUES ('26','0','棚卸開始フラグ');
