@@ -14314,7 +14314,7 @@ wwv_flow_api.create_page_item(
 ,p_name=>'P101_VERSION'
 ,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_api.id(22342397901620384786)
-,p_prompt=>'Ver0.0.0'
+,p_prompt=>'Ver0.0.1'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_field_template=>wwv_flow_api.id(22342386131005384753)
 ,p_item_template_options=>'#DEFAULT#'
