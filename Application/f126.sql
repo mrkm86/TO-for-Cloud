@@ -27,7 +27,7 @@ prompt APPLICATION 126 - TanaOrosi STARTER
 -- Application Export:
 --   Application:     126
 --   Name:            TanaOrosi STARTER
---   Date and Time:   05:45 火曜日 9月 4, 2018
+--   Date and Time:   05:59 火曜日 9月 4, 2018
 --   Exported By:     MURAKAMI@HEARTIS-SC.CO.JP
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -116,7 +116,7 @@ wwv_flow_api.create_flow(
 ,p_substitution_string_02=>'T_FIELD_NAME2'
 ,p_substitution_value_02=>unistr('\54C1\540D')
 ,p_last_updated_by=>'MURAKAMI@HEARTIS-SC.CO.JP'
-,p_last_upd_yyyymmddhh24miss=>'20180904054036'
+,p_last_upd_yyyymmddhh24miss=>'20180904055914'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>2
 ,p_ui_type_name => null
@@ -15601,7 +15601,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'MURAKAMI@HEARTIS-SC.CO.JP'
-,p_last_upd_yyyymmddhh24miss=>'20180904054036'
+,p_last_upd_yyyymmddhh24miss=>'20180904055914'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(66108361925783091578)
@@ -15749,7 +15749,7 @@ wwv_flow_api.create_page_item(
 ,p_field_template=>wwv_flow_api.id(22342386325984384754)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'N'
-,p_attribute_02=>'N'
+,p_attribute_02=>'Y'
 );
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(43839926870809996033)
