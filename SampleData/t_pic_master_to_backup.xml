@@ -1,13 +1,23 @@
 <?xml version="1.0"?>
 <ROWSET>
  <ROW>
-  <T_PIC>0000</T_PIC>
-  <T_PIC_NAME>佐藤</T_PIC_NAME>
+  <T_PIC>admin</T_PIC>
+  <T_PIC_NAME>admin</T_PIC_NAME>
+  <T_PASSWORD>39393939</T_PASSWORD>
+ </ROW>
+ <ROW>
+  <T_PIC>03</T_PIC>
+  <T_PIC_NAME>水口</T_PIC_NAME>
   <T_PASSWORD>30303030</T_PASSWORD>
  </ROW>
  <ROW>
-  <T_PIC>admin</T_PIC>
-  <T_PIC_NAME>admin</T_PIC_NAME>
+  <T_PIC>01</T_PIC>
+  <T_PIC_NAME>佐藤</T_PIC_NAME>
+  <T_PASSWORD>39393939</T_PASSWORD>
+ </ROW>
+ <ROW>
+  <T_PIC>02</T_PIC>
+  <T_PIC_NAME>鈴木</T_PIC_NAME>
   <T_PASSWORD>39393939</T_PASSWORD>
  </ROW>
 </ROWSET>
