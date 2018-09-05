@@ -543,7 +543,7 @@ create or replace PACKAGE BODY  "PKG_TO_DELETE_OLD_DATA" IS
         DBMS_SCHEDULER.CREATE_JOB( 
             job_name => 'JOB_TO_DELETE_OLD_DATA',  
             job_type => 'STORED_PROCEDURE',  
-            job_action => 'PKG_DELETE_OLD_DATA.fnc_DeleteOldData',  
+            job_action => 'PKG_TO_DELETE_OLD_DATA.fnc_DeleteOldData',  
             start_date => TO_TIMESTAMP_TZ(CONCAT(TO_CHAR(CURRENT_DATE, 'yyyy/MM/dd'), ' 00:00:00 +09:00'),'yyyy/mm/dd hh24:mi:ss TZH:TZM'),
             repeat_interval => 'FREQ=DAILY;',  
             auto_drop => FALSE, enabled => TRUE); 
